@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <div class="logo">📷</div>
+        <div class="logo">⌘</div>
         <nav>
             <a >conversion</a>
             <button class="button">Sign in</button>
@@ -34,6 +34,7 @@
                 <span class="tag">Tag</span>
                 <label for="transform-method">変換方法を選択</label>
 
+                <!--画像変換-->
                 <form action="/change/conv" method="POST">
                 <select id="transform-method" name="selected_option">
                     <option value="">選択してください</option>
@@ -42,16 +43,17 @@
                 </select>
                 <button>変換</button>
                 </form>
-
-                <textarea placeholder="変換の説明でもここにかく"></textarea>
+                
+                <!--ダウンロード-->
+                <textarea placeholder="変換の説明">{{message}}</textarea>
                 <form action="/change/dwonload" method="POST">
                 <button>保存</button>
                 </form>
             </div>
 
-
+        <!--のちに履歴作成する-->
         </section>
-        <a href="index.html">ホームに戻る</a>
+        <a href="/">ホームに戻る</a>
         <section class="history">
             <h2>履歴</h2>
             <div class="history-grid">
