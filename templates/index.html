@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像変換アプリ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">📷</div>
+        <nav>
+            <a>conversion</a>
+            <button class="button">Sign in</button>
+            <button class="button">Register</button>
+        </nav>
+    </header>
+    <main>
+    <h1>画像を変換する</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="file">画像を選択:</label>
+        <input type="file" id="file" name="file" accept="image/*">
+        <button type="submit">submit</button>
+    </form>
+    <p>以下に説明かく</p>
+    </main>
+</body>
+</html>
