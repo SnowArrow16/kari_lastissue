@@ -44,9 +44,10 @@
                 <button>変換</button>
                 </form>
                 
-                <!--ダウンロード-->
                 <textarea placeholder="変換の説明">{{message}}</textarea>
-                <form action="/change/dwonload" method="POST">
+
+                <!--ダウンロード-->
+                <form action="/change/download" method="POST">
                 <button>保存</button>
                 </form>
             </div>
@@ -57,9 +58,14 @@
         <section class="history">
             <h2>履歴</h2>
             <div class="history-grid">
+                {% if histories %}
+                {% for history in histories %}
+                <img src="data:image/png;base64,{{ history.image_data.decode('utf-8') }}" class="history-item">
+                {% endfor %}
+                {% else %}
                 <div class="history-item"></div>
                 <div class="history-item"></div>
-                <!-- 他の履歴 -->
+                {% endif %}
             </div>
             <div class="pagination">
                 <a href="#">&laquo;</a>

@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file
 from routes.negapoji import negaposi
 import os
+from models import initialize_database, History
+import base64
+import datetime
 
 app = Flask(__name__)
-
+# データベースの初期化
+initialize_database()
 
 #デフォルトページ
 @app.route('/')
@@ -15,7 +19,7 @@ def index():
 #ボタンを押して画像をstatic内に保存されるようにする
 @app.route('/upload', methods=['POST'])
 def upload():
-    # ファイルがアップロードされたか確認
+    # ファイルがアップロードされたか確認(本当はアラートを出したいがjsを使わなければならないので、時間が余ったら実装する)
     if 'file' not in request.files:
         return 'ファイルが選択されていません。', 400
     
@@ -33,14 +37,18 @@ def upload():
 #change.htmlのエンドポイント
 @app.route('/change')
 def change():
-    return render_template('change.html')
+    #Historyデータの抽出
+    histories = History.select()
+    return render_template('change.html', histories = histories)
 
 
 
 #画像変換ようのエンドポイント
 @app.route('/change/conv',  methods=['POST'])
 def conv():
+    #変換用モジュールのインスタンス化
     nega = negaposi()
+
     # `select` タグで選択された値を取得
     selected_value = request.form.get('selected_option')
     if selected_value=="":
@@ -52,13 +60,27 @@ def conv():
     #change.html内で変換された画像とメッセージが表示されるようにする
     output_path = os.path.join('static', 'output.png')
     file_exists = os.path.exists(output_path)
-    return render_template('change.html', file_exists=file_exists, message=conv_message)
+
+    #bace64を用いて画像データをエンコードする
+    with open(output_path, "rb") as output_file:
+        encord_img_data = base64.b64encode(output_file.read())
+
+    #Historyデータベースにエンコードした画像データと変換日時を代入する
+    History.create(
+        times = datetime.datetime.now(),
+        image_data = encord_img_data
+    )
+
+    #Historyデータの抽出
+    histories = History.select()
+    
+    return render_template('change.html', file_exists=file_exists, message=conv_message, histories = histories)
     
 
 
 #変換画像ダウンロードようのエンドポイント
-@app.route('/change/dwonload', methods=['POST'])
-def dwonload():
+@app.route('/change/download', methods=['POST'])
+def download():
     output_path = os.path.join('static', 'output.png')
     if os.path.exists(output_path):
         return send_file(output_path, as_attachment=True, download_name='output.png')
