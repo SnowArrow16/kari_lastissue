@@ -20,8 +20,8 @@ def index():
     return render_template('login.html')
 
 #ホーム画面------------------------------------------------------------------------------------------------------
-@app.route('/index/<int:user_id>')
-def home(user_id):
+@app.route('/index/<user_name>')
+def home(user_name):
     return render_template('index.html')
 
 #ログイン用------------------------------------------------------------------------------------------------------
@@ -34,10 +34,12 @@ def login():
         # データベースからユーザーを取得
         user = User.get_or_none(User.username == username)
         if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
+            session['user_id'] = user.id#id取得
+            session['user_name'] = user.username#URLにユーザー名を表示させたいため取得
             print(f"user_id = {session['user_id']}")#確認用
+            print(f"user_name = {session['user_name']}")#確認用
             #return render_template('index.html')
-            return redirect(url_for('home', user_id = session['user_id']))
+            return redirect(url_for('home', user_name = session['user_name']))
         else:
             return render_template('login.html')
     return render_template('login.html')
@@ -84,18 +86,18 @@ def upload():
     if file:
         filepath = os.path.join('static', 'img.png')
         file.save(filepath)
-        return redirect(url_for('change', user_id = session['user_id']))
+        return redirect(url_for('change', user_name = session['user_name']))
 
 
 
 #change.htmlのエンドポイント------------------------------------------------------------------------------------------------------
-@app.route('/change/<int:user_id>')
-def change(user_id):
+@app.route('/change/<user_name>')
+def change(user_name):
     #Historyデータの抽出
-    #user_id = session['user_id']
+    user_id = session['user_id']
     user = User.get_by_id(user_id)
     histories = History.select().where(History.user == user)
-    return render_template('change.html', histories = histories, user_id = user_id)
+    return render_template('change.html', histories = histories, user_name = user_name)
 
 
 
@@ -149,7 +151,7 @@ def conv():
     #histories = History.select()
     histories = History.select().where(History.user == user)
     print(f"his={histories}")
-    return render_template('change.html', file_exists=file_exists, message=conv_message, histories = histories, user_id = user_id)
+    return render_template('change.html', file_exists=file_exists, message=conv_message, histories = histories, user_name = session['user_name'])
     
 
 
